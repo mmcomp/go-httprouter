@@ -5,12 +5,21 @@ import (
 )
 
 type Router struct {
+	handlers map[string]http.Handler
 }
 
 func (receiver Router) Register(handler http.Handler, path string, method string) {
-	// ToDO !
+	receiver.handlers[method+":"+path] = handler
 }
 
 func (receiver Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// ToDO !
+	method := r.Method
+	path := r.URL.Path
+	handler, ok := receiver.handlers[method+":"+path]
+	if ok {
+		handler.ServeHTTP(w, r)
+	} else {
+		w.WriteHeader(404)
+		w.Write([]byte("Url Not Found!"))
+	}
 }
