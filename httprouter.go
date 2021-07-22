@@ -8,6 +8,10 @@ type Router struct {
 	handlers map[string]http.Handler
 }
 
+var Default Router = Router{
+	handlers: make(map[string]http.Handler),
+}
+
 func (receiver Router) Register(handler http.Handler, path string, method string) {
 	receiver.handlers[method+":"+path] = handler
 }
