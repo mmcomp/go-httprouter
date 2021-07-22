@@ -8,9 +8,9 @@ type Router struct {
 }
 
 func (receiver *Router) Register(handler http.Handler, path string, method string) {
-	// ToDO
+	// ToDO !
 }
 
 func (receiver *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// ToDO
+	// ToDO !
 }
