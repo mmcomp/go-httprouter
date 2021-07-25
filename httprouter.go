@@ -26,17 +26,23 @@ func (receiver Router) DelegatePath(handler http.Handler, path string, method st
 func (receiver Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	method := r.Method
 	path := r.URL.Path
+	handler, ok := receiver.handlers[method+":"+path]
+	if ok {
+		handler.ServeHTTP(w, r)
+		return
+	}
+
 	for key, theHandler := range receiver.delegates {
+		if strings.HasPrefix(method+":"+path, key+"/") {
+			theHandler.ServeHTTP(w, r)
+			return
+		}
 		if strings.HasPrefix(method+":"+path, key) {
 			theHandler.ServeHTTP(w, r)
 			return
 		}
 	}
-	handler, ok := receiver.handlers[method+":"+path]
-	if ok {
-		handler.ServeHTTP(w, r)
-	} else {
-		w.WriteHeader(404)
-		w.Write([]byte("Url Not Found!"))
-	}
+
+	w.WriteHeader(404)
+	w.Write([]byte("Url Not Found!"))
 }
