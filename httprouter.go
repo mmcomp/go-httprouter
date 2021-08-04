@@ -1,6 +1,7 @@
 package httprouter
 
 import (
+	"errors"
 	"net/http"
 )
 
@@ -14,20 +15,32 @@ var Default Router = Router{
 	delegates: make(map[string]map[string]http.Handler),
 }
 
-func (receiver Router) Register(handler http.Handler, path string, method string) {
-	_, found := receiver.handlers[path]
+func (receiver Router) Register(handler http.Handler, path string, method string) error {
+	var found bool
+	_, found = receiver.handlers[path]
 	if !found {
 		receiver.handlers[path] = make(map[string]http.Handler)
 	}
+	_, found = receiver.handlers[path][method]
+	if found {
+		return errors.New("this path and method are already registered")
+	}
 	receiver.handlers[path][method] = handler
+	return nil
 }
 
-func (receiver Router) DelegatePath(handler http.Handler, path string, method string) {
-	_, found := receiver.delegates[path]
+func (receiver Router) DelegatePath(handler http.Handler, path string, method string) error {
+	var found bool
+	_, found = receiver.delegates[path]
 	if !found {
 		receiver.delegates[path] = make(map[string]http.Handler)
 	}
+	_, found = receiver.delegates[path][method]
+	if found {
+		return errors.New("this path and method are already registered")
+	}
 	receiver.delegates[path][method] = handler
+	return nil
 }
 
 func (receiver Router) handler(method string, path string) (http.Handler, int) {
