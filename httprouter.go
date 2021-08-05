@@ -3,6 +3,7 @@ package httprouter
 import (
 	"errors"
 	"net/http"
+	"path"
 )
 
 type Router struct {
@@ -43,11 +44,12 @@ func (receiver Router) DelegatePath(handler http.Handler, path string, method st
 	return nil
 }
 
-func (receiver Router) handler(method string, path string) (http.Handler, int) {
+func (receiver Router) handler(method string, selectedPath string) (http.Handler, int) {
 	var found bool
 	var handlers map[string]http.Handler
 	var handler http.Handler
-	handlers, found = receiver.handlers[path]
+	selectedPath = path.Clean(selectedPath)
+	handlers, found = receiver.handlers[selectedPath]
 	if found {
 		handler, found = handlers[method]
 		if found {
@@ -56,9 +58,29 @@ func (receiver Router) handler(method string, path string) (http.Handler, int) {
 		return nil, 405
 	}
 
-	handlers, found = receiver.delegates[path]
+	handlers, found = receiver.delegates[selectedPath]
 	if !found {
-		handlers, found = receiver.delegates[path+"/"]
+		var s string = selectedPath
+		for {
+
+			s = path.Clean(s)
+			handlers, found = receiver.delegates[s]
+			if found {
+				break
+			}
+			handlers, found = receiver.delegates[s+"/"]
+			if found {
+				break
+			}
+			s = path.Dir(s)
+			if s != "/" {
+				s += "/"
+			}
+
+			if s == "/" {
+				break
+			}
+		}
 	}
 	if found {
 		handler, found = handlers[method]
