@@ -59,12 +59,12 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 		}
 		return nil, 405
 	}
-	fmt.Println("Delegates :")
-	for p := range receiver.delegates {
-		fmt.Println(p, " ", receiver.delegates[p])
-	}
+	// fmt.Println("Delegates :")
+	// for p := range receiver.delegates {
+	// 	fmt.Println(p, " ", receiver.delegates[p])
+	// }
 	handlers, found = receiver.delegates[selectedPath]
-	fmt.Println("Delegate Handlers : ", found)
+	// fmt.Println("Delegate Handlers : ", found)
 	if !found {
 		var s string = selectedPath
 		for {
@@ -90,6 +90,7 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 	}
 	if found {
 		handler, found = handlers[method]
+		fmt.Println("Delegate Handler : ", found, handler)
 		if found {
 			return handler, 0
 		}
