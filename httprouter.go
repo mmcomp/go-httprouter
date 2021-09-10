@@ -90,7 +90,7 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 	}
 	if found {
 		handler, found = handlers[method]
-		fmt.Println("Delegate Handler : ", found, handler)
+		fmt.Printf("Delegate Handler : %t (%T) %#v", found, handler, handler)
 		if found {
 			return handler, 0
 		}
