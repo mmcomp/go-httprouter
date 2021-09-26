@@ -85,7 +85,7 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 			// 	s += "/"
 			// }
 
-			if s == "." {
+			if s == "." || s == "/" {
 				break
 			}
 		}
