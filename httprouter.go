@@ -2,7 +2,6 @@ package httprouter
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"path"
 )
@@ -46,7 +45,6 @@ func (receiver Router) DelegatePath(handler http.Handler, path string, method st
 }
 
 func (receiver Router) handler(method string, selectedPath string) (http.Handler, int) {
-	fmt.Println("Router Handler  path ", method, ": ", selectedPath)
 	var found bool
 	var handlers map[string]http.Handler
 	var handler http.Handler
@@ -59,17 +57,10 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 		}
 		return nil, 405
 	}
-	fmt.Println("Delegates :")
-	for p := range receiver.delegates {
-		fmt.Println(p, " ", receiver.delegates[p])
-	}
-	fmt.Println("Delegate Check Handlers : ", selectedPath)
 	handlers, found = receiver.delegates[selectedPath]
-	fmt.Println("Delegate Handlers : ", found)
 	if !found {
 		var s string = selectedPath
 		for {
-			fmt.Println("Check alter path ", s)
 			s = path.Clean(s)
 			handlers, found = receiver.delegates[s]
 			if found {
@@ -80,10 +71,6 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 				break
 			}
 			s = path.Dir(s)
-			fmt.Println("Next path ", s)
-			// if s != "/" {
-			// 	s += "/"
-			// }
 
 			if s == "." || s == "/" {
 				break
@@ -92,7 +79,6 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 	}
 	if found {
 		handler, found = handlers[method]
-		fmt.Printf("Delegate Handler : %t (%T) %#v", found, handler, handler)
 		if found {
 			return handler, 0
 		}
