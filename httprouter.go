@@ -80,6 +80,7 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 				break
 			}
 			s = path.Dir(s)
+			fmt.Println("Next path ", s)
 			if s != "/" {
 				s += "/"
 			}
