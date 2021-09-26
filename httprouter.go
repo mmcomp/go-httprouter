@@ -81,11 +81,11 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 			}
 			s = path.Dir(s)
 			fmt.Println("Next path ", s)
-			if s != "/" {
-				s += "/"
-			}
+			// if s != "/" {
+			// 	s += "/"
+			// }
 
-			if s == "/" {
+			if s == "." {
 				break
 			}
 		}
