@@ -63,12 +63,13 @@ func (receiver Router) handler(method string, selectedPath string) (http.Handler
 	for p := range receiver.delegates {
 		fmt.Println(p, " ", receiver.delegates[p])
 	}
+	fmt.Println("Delegate Check Handlers : ", selectedPath)
 	handlers, found = receiver.delegates[selectedPath]
 	fmt.Println("Delegate Handlers : ", found)
 	if !found {
 		var s string = selectedPath
 		for {
-
+			fmt.Println("Check alter path ", s)
 			s = path.Clean(s)
 			handlers, found = receiver.delegates[s]
 			if found {
